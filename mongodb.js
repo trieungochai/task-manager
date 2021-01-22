@@ -4,10 +4,6 @@ const { MongoClient, ObjectID } = require('mongodb');
 const connectionURL = 'mongodb://127.0.0.1:27017';
 const databaseName = 'task-manager';
 
-const id = new ObjectID();
-console.log(id.id.length);
-console.log(id.toHexString().length);
-
 MongoClient.connect(connectionURL, { useNewUrlParser: true }, (error, client) => {
   if (error) {
     return console.log('Unable to connect to database!');
@@ -15,50 +11,46 @@ MongoClient.connect(connectionURL, { useNewUrlParser: true }, (error, client) =>
 
   const db = client.db(databaseName);
 
-  // db.collection('users').insertOne({
-  //   _id: id,
-  //   name: 'Cai',
-  //   age: 29
-  // }, (error, result) => {
+  // db.collection('users').findOne({ _id: new ObjectID('600aaab93efe1a238ed66554') }, (error, user) => {
   //   if (error) {
-  //     console.log('Unable to insert user!');
+  //     console.log('Unable to fetch!');
   //   }
 
-  //   console.log(result.ops);
+  //   console.log(user);
   // });
 
-  // db.collection('users').insertMany([
-  //   {
-  //     name: 'Lam Thi Hoang Anh',
-  //     age: 28
-  //   }, {
-  //     name: 'Trieu Ngoc Ha',
-  //     age: 22
-  //   }
-  // ], (error, result) => {
+  // db.collection('users').find({ age: 28 }).toArray((error, user) => {
   //   if (error) {
-  //     console.log('Unable to insert documents!');
+  //     console.log('Unable to fetch!');
   //   }
 
-  //   console.log(result.ops);
+  //   console.log(user);
   // });
 
-  // db.collection('tasks').insertMany([
-  //   {
-  //     description: 'Clean the house',
-  //     completed: true
-  //   }, {
-  //     description: 'Renew inspection',
-  //     completed: false
-  //   }, {
-  //     description: 'Pot plants',
-  //     completed: false
-  //   }
-  // ], (error, result) => {
+  // db.collection('users').find({ age: 28 }).count((error, user) => {
   //   if (error) {
-  //     console.log('Unable to insert tasks!');
+  //     console.log('Unable to fetch!');
   //   }
 
-  //   console.log(result.ops);
+  //   console.log(user);
   // });
+
+  // 1. Use findOne to fetch the last task by its id (print doc to console)
+  // 2. Use find to fetch all tasks that are not completed (print docs to console)
+  
+  db.collection('tasks').findOne({ _id: new ObjectID('600a7d9f13d4d21e55a2d2e5') }, (error, task) => {
+    if (error) {
+      console.log('Unable to fetch!');
+    }
+
+    console.log(task);
+  });
+
+  db.collection('tasks').find({ completed: false }).toArray((error, task) => {
+    if (error) {
+      console.log('Unable to fetch!');
+    }
+
+    console.log(task);
+  });
 });
