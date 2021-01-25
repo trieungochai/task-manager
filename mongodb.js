@@ -11,31 +11,19 @@ MongoClient.connect(connectionURL, { useNewUrlParser: true }, (error, client) =>
 
   const db = client.db(databaseName);
 
-  // const updatePromise = db.collection('users').updateOne({
-  //   _id: new ObjectID('60095b9237eee314e380dc41')
-  // }, {
-  //   $set: {
-  //     name: 'Trieu Ngoc Hai'
-  //   }
-  // })
-
-  // updatePromise.then(result => {
-  //   console.log(result);
-  // }).catch(error => {
-  //   console.log(error);
-  // });
-
-  // Goal: use UpdateMany to complete all tasks
-  const updatePromise =  db.collection('tasks').updateMany({
-    completed: false
-  }, {
-    $set: {
-      completed: true
-    }
+  db.collection('users').deleteMany({
+    age: 28
+  }).then(result => {
+    console.log(result);
+  }).catch(error => {
+    console.log(error);
   });
 
-  updatePromise.then(result => {
-    console.log(result.modifiedCount);
+  // Goal: Use deleteOne to remove a task
+  db.collection('tasks').deleteOne({
+    description: 'Clean the house'
+  }).then(result => {
+    console.log(result);
   }).catch(error => {
     console.log(error);
   });
