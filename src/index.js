@@ -66,6 +66,28 @@ app.get('/users/:id', async(req, res) => {
   };
 });
 
+app.patch('/users/:id', async(req, res) => {
+  const updates = new Object(req.body);
+  const allowedUpdates = ['name', 'email', 'password', 'age'];
+  const isValidUpdates = updates.every(update => allowedUpdates.includes(update));
+
+  if (!isValidUpdates) {
+    return res.status(400).send({ error: 'Invalid updates!' });
+  }
+
+  try {
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+
+    if (!user) {
+      res.status(404).send(user);
+    }
+
+    res.send(user);
+  } catch(err) {
+    res.status(400).send(err);
+  };
+});
+
 // Goal: Refactor task routes to use async/await
 
 app.post('/tasks', async(req, res) => {
