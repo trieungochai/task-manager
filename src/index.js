@@ -79,7 +79,7 @@ app.patch('/users/:id', async(req, res) => {
     const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
 
     if (!user) {
-      res.status(404).send(user);
+      res.status(404).send();
     }
 
     res.send(user);
@@ -139,12 +139,40 @@ app.get('/tasks/:id', async(req, res) => {
     const task = await Task.findById(_id);
 
     if (!task) {
-      return res.status(404).send();
+        return res.status(404).send();
     }
 
-    res.send(task);
+      res.send(task);
   } catch(err) {
     res.status(500).send(err);
+  };
+});
+
+// Goal: Allow for task updates
+// 1. Send err if unknown updates
+// 2. Attempt to update the task
+//    - Handle task not found
+//    - Handle validation errs
+//    - Handle success
+app.patch('/tasks/:id', async(req, res) => {
+  const updates = new Object.keys(req.body);
+  const allowedUpdates = ['description', 'completed'];
+  const isValidUpdates = updates.every(update => allowedUpdates.includes(update));
+
+  if (!isValidUpdates) {
+    return res.status(400).send({ error: 'Invalid updates!' });
+  }
+
+  try {
+    const task = await Task.findByIdAndUpdate(res.params.id, req.body, { new: true, runValidators: true });
+
+      if (!task) {
+        res.status(404).send();
+      }
+
+      res.send(task);
+  } catch(err) {
+    res.status(400).send(err);
   };
 });
 
