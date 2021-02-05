@@ -18,10 +18,10 @@ app.post('/users', async(req, res) => {
   // });
 
   try {
-    await user.save();
-    res.status(201).send(user);
+      await user.save();
+      res.status(201).send(user);
   } catch(err) {
-    res.status(400).send(err);
+      res.status(400).send(err);
   };
 });
 
@@ -33,10 +33,10 @@ app.get('/users', async(req, res) => {
   // });
 
   try {
-    const users = await User.find({});
-    res.send(users);
+      const users = await User.find({});
+      res.send(users);
   } catch(err) {
-    res.status(500).send(err);
+      res.status(500).send(err);
   };
 });
 
@@ -54,37 +54,51 @@ app.get('/users/:id', async(req, res) => {
   // });
 
   try {
-    const user = await User.findById(_id);
+      const user = await User.findById(_id);
     
-    if (!user) {
-      return res.status(400).send();
-    }
+      if(!user) {
+        return res.status(400).send();
+      }
 
-    res.send(user);
+      res.send(user);
   } catch(err) {
-    res.status(500).send(err);
+      res.status(500).send(err);
   };
 });
 
 app.patch('/users/:id', async(req, res) => {
-  const updates = new Object(req.body);
+  const updates = Object.keys(req.body);
   const allowedUpdates = ['name', 'email', 'password', 'age'];
   const isValidUpdates = updates.every(update => allowedUpdates.includes(update));
 
-  if (!isValidUpdates) {
+  if(!isValidUpdates) {
     return res.status(400).send({ error: 'Invalid updates!' });
   }
 
   try {
     const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
 
-    if (!user) {
-      res.status(404).send();
+    if(!user) {
+      return res.status(404).send();
     }
 
-    res.send(user);
+      res.send(user);
   } catch(err) {
-    res.status(400).send(err);
+      res.status(400).send(err);
+  };
+});
+
+app.delete('/users/:id', async(req, res) => {
+  try {
+      const user = await User.findByIdAndDelete(req.params.id);
+
+      if (!user) {
+        return res.status(404).send();
+      }
+
+      res.send(user);
+  } catch(err) {
+      res.status(500).send(err);
   };
 });
 
@@ -138,7 +152,7 @@ app.get('/tasks/:id', async(req, res) => {
   try {
     const task = await Task.findById(_id);
 
-    if (!task) {
+    if(!task) {
         return res.status(404).send();
     }
 
@@ -155,24 +169,39 @@ app.get('/tasks/:id', async(req, res) => {
 //    - Handle validation errs
 //    - Handle success
 app.patch('/tasks/:id', async(req, res) => {
-  const updates = new Object.keys(req.body);
+  const updates = Object.keys(req.body);
   const allowedUpdates = ['description', 'completed'];
   const isValidUpdates = updates.every(update => allowedUpdates.includes(update));
 
-  if (!isValidUpdates) {
+  if(!isValidUpdates) {
     return res.status(400).send({ error: 'Invalid updates!' });
   }
 
   try {
-    const task = await Task.findByIdAndUpdate(res.params.id, req.body, { new: true, runValidators: true });
+      const task = await Task.findByIdAndUpdate(res.params.id, req.body, { new: true, runValidators: true });
 
-      if (!task) {
+      if(!task) {
         res.status(404).send();
       }
 
       res.send(task);
   } catch(err) {
-    res.status(400).send(err);
+      res.status(400).send(err);
+  };
+});
+
+// Goal: Allow for removal of tasks
+app.delete('/tasks/:id', async(req, res) => {
+  try {
+      const task = await Task.findByIdAndDelete(req.params.id);
+      
+      if(!task) {
+        return res.status(404).send();
+      }
+
+      res.send(task);
+  } catch(err) {
+      res.status(500).send(err);
   };
 });
 
