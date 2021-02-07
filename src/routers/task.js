@@ -33,36 +33,43 @@ router.get('/tasks/:id', async(req, res) => {
       res.send(task);
   } catch(err) {
       res.status(500).send(err);
-  };
-});
+    };
+  });
+  
+  // Goal: Change how tasks are updated
+  // 1. Find the task
+  // 2. Alter the task properties
+  // 3. Save the task
+  router.patch('/tasks/:id', async(req, res) => {
+    const updates = Object.keys(req.body);
+    const allowedUpdates = ['descriptions', 'completed'];
+    const isValidUpdates = updates.every(update => allowedUpdates.includes(update));
 
-router.patch('/tasks/:id', async(req, res) => {
-  const updates = Object.keys(req.body);
-  const allowedUpdates = ['descriptions', 'completed'];
-  const isValidUpdates = updates.every(update => allowedUpdates.includes(update));
+    if(!isValidUpdates) {
+      return res.status(400).send({ error: 'Invalid updates!' });
+    }
 
-  if(!isValidUpdates) {
-    return res.status(400).send({ erorr: 'Invalid updates!' });
-  }
+    try {
+        // const task = await Task.findByIdAndUpdate(req.params.id);
+        const task = await Task.findById(req.params.id);
+        task.forEach(update => task[update] = req.body[update]);
+        await task.save();
+        
+        if(!task) {
+          return res.status(404).send();
+        }
 
-  try {
-      const task = await Task.findByIdAndUpdate(req.params.id);
-      
-      if(!task) {
-        return res.status(404).send();
-      }
-
-      res.send(task);
-  } catch(err) {
-      res.status(400).send(err)
-  };
-});
+        res.send(task);
+    } catch(err) {
+        res.status(400).send(err)
+    };
+  });
 
 router.delete('/tasks/:id', async(req, res) => {
   try {
       const task = await Task.findByIdAndDelete(req.params.id);
 
-      if (!task) {
+      if(!task) {
         return res.status(404).send();
       }
 
