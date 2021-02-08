@@ -57,21 +57,11 @@ router.get('/users/me', auth, async(req, res) => {
   res.send(req.user);
 });
 
-router.get('/users/:id', async(req, res) => {
-  try {
-      const user = await User.findById(req.params.id);
+// Goal: Refactor the update profile route
+// 1. Add the authentication middleware into the mix
+// 2. Use the existing user document instead of fetching vi param id
 
-      if(!user) {
-        return res.status(404).send();
-      }
-
-      res.send(user);
-  } catch(err) {
-      res.status(500).send(err);
-  };
-});
-
-router.patch('/users/:id', async(req, res) => {
+router.patch('/users/me', auth, async(req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ['name', 'email', 'password', 'age'];
   const isValidUpdates = updates.every(update => allowedUpdates.includes(update));
@@ -81,30 +71,23 @@ router.patch('/users/:id', async(req, res) => {
   }
 
   try {
-      // const user = await User.findByIdAndUpdate(req.params.id);
-      const user = await User.findById(req.params.id);
-      user.forEach(update => user[update] = req.body[update]);
-      await user.save()
-
-      if(!user) {
-        return res.status(404).send()
-      }
-      
+      updates.forEach(update => user[update] = req.body[update]);
+      await req.user.save();
       res.send(user);
   } catch(err) {
       res.status(400).send(err);
   };
 });
 
-router.delete('/users/:id', async(req, res) => {
+router.delete('/users/me', auth, async(req, res) => {
   try {
-      const user = await User.findByIdAndDelete(req.params.id);
+      // const user = await User.findByIdAndDelete(req.params.id);
 
-      if(!user) {
-        return res.status(404).send();
-      }
-
-      res.send(user);
+      // if(!user) {
+      //   return res.status(404).send();
+      // }
+      await req.user.remove();
+      res.send(req.user);
   } catch(err) {
       res.status(500).send(err)
   };
