@@ -17,20 +17,10 @@ app.use(taskRouter);
 // Goal: Setup middleware for maintenance mode
 // 1. Register a new middleware function
 // 2. Send back a maintenance message with a 503 status code
-app.use((req, res, next) => {
-  res.status(503).send('Site is currently down. Check back soon!')
-});
+// app.use((req, res, next) => {
+//   res.status(503).send('Site is currently down. Check back soon!')
+// });
 
 app.listen(port, () => {
   console.log('Server is up on port ' + port);
 });
-
-const jwt = require('jsonwebtoken');
-
-const myFunction = async() => {
-  const token = jwt.sign({ _id: 'abc123' }, 'thisismynewcourse', { expiresIn: '7 days' } );
-  console.log(token);
-
-  const data = jwt.verify(token, 'thisismynewcourse');
-  console.log(data);
-};
