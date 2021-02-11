@@ -18,9 +18,20 @@ app.use(taskRouter);
 // 1. Register a new middleware function
 // 2. Send back a maintenance message with a 503 status code
 // app.use((req, res, next) => {
-//   res.status(503).send('Site is currently down. Check back soon!')
-// });
+  //   res.status(503).send('Site is currently down. Check back soon!')
+  // });
+  
+  app.listen(port, () => {
+    console.log('Server is up on port ' + port);
+  });
+  
+const Task = require('./models/task');
+const User = require('./models/user');
 
-app.listen(port, () => {
-  console.log('Server is up on port ' + port);
-});
+const main = async() => {
+  const user = await User.findById('acadadf');
+  await user.populate('tasks').execPopulate();
+  console.log(user.tasks);
+};
+
+main();
