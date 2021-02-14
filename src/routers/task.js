@@ -20,10 +20,10 @@ router.post('/tasks', auth, async(req, res) => {
   };
 });
 
-// Goal: Refactor GET /tasks
-// (Return tasks only for the authenticated user)
+// Goal: Setup support for skip
 
 // GET /tasks?completed=true
+// GET /tasks?limit=10&skip=
 router.get('/tasks', auth, async(req, res) => {
   const match = {};
 
@@ -34,7 +34,11 @@ router.get('/tasks', auth, async(req, res) => {
   try {
       await req.user.populate({
         patch: 'tasks',
-        match
+        match,
+        options: {
+          limit: parseInt(req.query.limit),
+          skip: parseInt(req.query.skip)
+        }
       }).execPopulate();
       res.send(req.user.tasks);
   } catch(err) {
