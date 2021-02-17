@@ -1,4 +1,5 @@
 const express = require('express');
+const multer = require('multer');
 const User = require('../models/user');
 const auth = require('../middleware/auth');
 const router = new express.Router();
@@ -91,6 +92,16 @@ router.delete('/users/me', auth, async(req, res) => {
   } catch(err) {
       res.status(500).send(err)
   };
+});
+
+// Goal: Setup endpoint for avatar upload
+// 1. Setup multer to store uploads in in an avatars directory
+// 2. Choose name 'avatars' for the key when registering the middleware
+const upload = multer({
+  dest: 'avatars'
+});
+router.post('/users/me/avatar', upload.single('avatar'), (req, res) => {
+  res.send();
 });
 
 module.exports = router;
