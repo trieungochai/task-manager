@@ -97,9 +97,15 @@ router.delete('/users/me', auth, async(req, res) => {
 // Goal: Setup endpoint for avatar upload
 // 1. Setup multer to store uploads in in an avatars directory
 // 2. Choose name 'avatars' for the key when registering the middleware
+
 // Goal: Add validation to avatar upload route
 // 1. Limit the upload size to 1MB
 // 2. Only allow jpg, jpeg, png
+
+// Goal: Clean up error handling
+// 1. Setup an err handling function
+// 2. Send back a 400 with the err msg
+
 const upload = multer({
   dest: 'avatars',
   limits: {
@@ -115,6 +121,8 @@ const upload = multer({
 });
 router.post('/users/me/avatar', upload.single('avatar'), (req, res) => {
   res.send();
+}, (error, req, res, next) => {
+  res.status(400).send( {error: error.message} );
 });
 
 module.exports = router;
