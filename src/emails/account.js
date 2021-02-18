@@ -1,7 +1,11 @@
 const sgMail = require('@sendgrid/mail');
-const sendGridAPIKey = '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';
 
-sgMail.setApiKey(sendGridAPIKey);
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+// Goal: Pull JWT secret and database URL into env vars
+// 1. Create 2 new env vars: JWT_SECRET and MONGODB_URL
+// 2. Setup values for each in the development env files
+// 3. Swap out three hardcoded values
 
 const sendWelcomeEmail = (email, name) => {
   sgMail.send({
