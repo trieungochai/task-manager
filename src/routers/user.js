@@ -119,10 +119,21 @@ const upload = multer({
     callback(undefined, true);
   }
 });
-router.post('/users/me/avatar', upload.single('avatar'), (req, res) => {
+
+router.post('/users/me/avatar', upload.single('avatar'), async(req, res) => {
+  req.user.avatar = req.file.buffer;
+  await req.user.save();
   res.send();
 }, (error, req, res, next) => {
   res.status(400).send( {error: error.message} );
+});
+
+// Goal: Setup route to delete avatar
+// (Set the field to undefined and save the user sending back a 200)
+router.delete('/user/me/avatar', auth, async(req, res) => {
+  req.user.avatar = undefined;
+  await req.user.save();
+  res.send();
 });
 
 module.exports = router;
